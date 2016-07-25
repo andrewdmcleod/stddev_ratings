@@ -13,3 +13,4 @@ class MoviesItem(scrapy.Item):
     title = scrapy.Field()
     reviews = scrapy.Field()
     page = scrapy.Field()
+    std_dev = scrapy.Field()
