@@ -24,18 +24,23 @@ from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 global rev_arr
 rev_arr = []
 
+movie_array = ['crash', 'vanilly_sky', 'forrest_gump',
+               'the_fountain', '1210830-antichrist', 'kill_bill_vol_1',
+               'eyes_wide_shut', 'the_tree_of_life_2011', 'avatar']
+
 class MovieSpider(CrawlSpider):
     name = "movie"                                      # Must be unique
     allowed_domains = ["www.rottentomatoes.com"]        # Restrict spiders to a certain domain
     start_urls = [
-        "https://www.rottentomatoes.com/m/finding_dory/",
-        #"https://www.rottentomatoes.com/top/bestofrt/?year=2014",
+        #"https://www.rottentomatoes.com/m/finding_dory/",
+        "https://www.rottentomatoes.com/top/bestofrt/?year=2014",#
         #"http://www.rottentomatoes.com/top/bestofrt/?year=2014",    # Where the first spider starts
     ]
 
     # See readme.md for more on these rules (note: callback is set on our function 'parse_movie')
     rules = (
-        Rule(SgmlLinkExtractor(allow=('https:\/\/www\.rottentomatoes\.com\/m\/finding_dory\/$', ), ), follow=True),
+        Rule(SgmlLinkExtractor(allow=('https:\/\/www\.rottentomatoes\.com\/m\/\w+\/$', ), ), follow=True),
+        #Rule(SgmlLinkExtractor(allow=('https:\/\/www\.rottentomatoes\.com\/m\/finding_dory\/$', ), ), follow=True),
         Rule(SgmlLinkExtractor(allow=('\/m\/\w+\/reviews\/\?type=user$', )), callback='parse_movie', follow=True),
         Rule(SgmlLinkExtractor(allow=('\/m\/\w+\/reviews\/\?page=\d+\&type=user\&sort=$', )), callback='parse_movie', follow=True),
     )
@@ -100,7 +105,7 @@ class MovieSpider(CrawlSpider):
         item = MoviesItem()
         item['title'] = title
         #item['reviews'] = list(reviews)
-        #item['page'] = page
+        item['page'] = page
         item['std_dev'] = numpy.std(rev_arr)
 
         yield item
